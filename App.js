@@ -1,8 +1,7 @@
-import { products1, products2 } from "./src/stock.js";
+
 
 /* ------------------------------VARIABLES---------------------------------- */
-
-const products = [...products1, ...products2];                  
+                
 const cartBtn = document.querySelector(".cart-btn");
 const payBtn = document.querySelector(".pay");
 const closeCartBtn = document.querySelector(".close-cart");
@@ -19,46 +18,48 @@ let cartQuantity = 0;
 let cartTotal = [{totalQuantity: 0, subTotalPrice: 0, totalilzedPurchase: 0}];
 let [{qty, sTotal, total}] = cartTotal;
 
-
-
 getAndFillCartFromSessionStorage();
-/* ------------------------------PRODUCTS DISPLAY FROM STOCK---------------------------------- */
+/* ------------------------------PRODUCTS DISPLAY FROM DATA.JSON---------------------------------- */
 
-products.forEach(({id, title, price, img, quantity}) => {         
-    let productContent = document.createElement("article");
-    productContent.classList.add("product");
-    productContent.innerHTML = `<div class="img-container">
-                                <img src="${img}"
-                                    alt="product car decal" class="product-img">
-                                <button class="bag-btn" id="${id}">
-                                    <i class="fas fa-shopping-cart"></i>
-                                    click the image to add to the cart
-                                </button>
-                                </div>
-                                <h3>${title}</h3>
-                                <h4>$${price}</h4>`
-    productsDOM.append(productContent);
-    /* ----------CLICK PRODUCT TO ADD AND SUM IN THE BASQUET---------------------------- */
-
-    productContent.addEventListener("click", () => {
-            Toastify({
-        text: "Item adeed to your cart",
-        duration: 2000,
-        offset: {
-            x: 0,
-            y: 50
-          },
-        style: {
-            background: '#00be95'
-        }
-    }).showToast();
-        let productAlreadyExists = addItemToCart({id, title, price, img, quantity});
-        if (productAlreadyExists) return;
-        myCart.push(products[id - 1]);
-        setMyCartToSessionStorage();
-        createCartElement({id, title, price, img, quantity});
-    })
-});
+const products = fetch('/data.json')                               ////////////////////////////***************FETCH*****************///////////////////////////////////////
+    .then((response) => response.json())
+    .then((products) => {
+        products.forEach(({id, title, price, img, quantity}) => {         
+            let productContent = document.createElement("article");
+            productContent.classList.add("product");
+            productContent.innerHTML = `<div class="img-container">
+                                        <img src="${img}"
+                                            alt="product car decal" class="product-img">
+                                        <button class="bag-btn" id="${id}">
+                                            <i class="fas fa-shopping-cart"></i>
+                                            click the image to add to the cart
+                                        </button>
+                                        </div>
+                                        <h3>${title}</h3>
+                                        <h4>$${price}</h4>`
+            productsDOM.append(productContent);
+            /* ----------CLICK PRODUCT TO ADD AND SUM IN THE BASQUET---------------------------- */
+        
+            productContent.addEventListener("click", () => {
+                    Toastify({
+                text: "Item adeed to your cart",
+                duration: 2000,
+                offset: {
+                    x: 0,
+                    y: 50
+                        },
+                style: {
+                    background: '#00be95'
+                }
+            }).showToast();
+                let productAlreadyExists = addItemToCart({id, title, price, img, quantity});
+                if (productAlreadyExists) return;
+                myCart.push(products[id - 1]);
+                setMyCartToSessionStorage();
+                createCartElement({id, title, price, img, quantity});
+            })
+        }); 
+        });
 
 function createCartElement(product) {
     let cartItems = document.createElement("div");
@@ -112,7 +113,7 @@ function addItemToCart(product, operation) {
 
 function removeItemFromCart(cartObj, index) {
     document.getElementById(`${cartObj.id}_cart_item`).remove();
-    myCart.splice(index, 1);
+    myCart.splice(index, 1);                ////////////////////////////////////////////FIX BUG WEN DELETING THE FIRST ITEM/////////////////
 }
 
 /* --------------------------------FUNCTIONS FOR OPEN AND CLOSE THE CART----------------------- */
