@@ -21,7 +21,7 @@ let [{qty, sTotal, total}] = cartTotal;
 getAndFillCartFromSessionStorage();
 /* ------------------------------PRODUCTS DISPLAY FROM DATA.JSON---------------------------------- */
 
-const products = fetch('/data.json')                               ////////////////////////////***************FETCH*****************///////////////////////////////////////
+const products = fetch('./data.json')                               ////////////////////////////***************FETCH*****************///////////////////////////////////////
     .then((response) => response.json())
     .then((products) => {
         products.forEach(({id, title, price, img, quantity}) => {         
